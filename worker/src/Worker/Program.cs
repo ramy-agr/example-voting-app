@@ -102,18 +102,48 @@ namespace Worker
             return connection;
         }
 
+        // private static ConnectionMultiplexer OpenRedisConnection(string hostname)
+        // {
+        //     // Use IP address to workaround https://github.com/StackExchange/StackExchange.Redis/issues/410
+        //     var ipAddress = GetIp(hostname);
+        //     Console.WriteLine($"Found redis at {ipAddress}");
+
+        //     while (true)
+        //     {
+        //         try
+        //         {
+        //             Console.Error.WriteLine("Connecting to redis");
+        //             return ConnectionMultiplexer.Connect(ipAddress);
+        //         }
+        //         catch (RedisConnectionException)
+        //         {
+        //             Console.Error.WriteLine("Waiting for redis");
+        //             Thread.Sleep(1000);
+        //         }
+        //     }
+        // }
+
         private static ConnectionMultiplexer OpenRedisConnection(string hostname)
         {
-            // Use IP address to workaround https://github.com/StackExchange/StackExchange.Redis/issues/410
+            // Use IP address to workaround DNS issues
             var ipAddress = GetIp(hostname);
             Console.WriteLine($"Found redis at {ipAddress}");
+
+            // Include password in the connection options
+            var redisPassword = Environment.GetEnvironmentVariable("REDIS_PASSWORD"); // Retrieve the password
+            var  = new ConfigurationOptions
+            {
+                EndPoints = { ipAddress },
+                Password = redisPassword, // Set the password here
+                AbortOnConnectFail = false
+            };
 
             while (true)
             {
                 try
                 {
                     Console.Error.WriteLine("Connecting to redis");
-                    return ConnectionMultiplexer.Connect(ipAddress);
+                    return ConnectionMultiplexer.Connect(configOptions); // Connect using the configuration options
                 }
                 catch (RedisConnectionException)
                 {
@@ -122,6 +152,7 @@ namespace Worker
                 }
             }
         }
+
 
         private static string GetIp(string hostname)
             => Dns.GetHostEntryAsync(hostname)
