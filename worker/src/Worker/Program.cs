@@ -131,7 +131,7 @@ namespace Worker
 
             // Include password in the connection options
             var redisPassword = Environment.GetEnvironmentVariable("REDIS_PASSWORD"); // Retrieve the password
-            var  = new ConfigurationOptions
+            var configOptions = new ConfigurationOptions // Correctly declare the variable here
             {
                 EndPoints = { ipAddress },
                 Password = redisPassword, // Set the password here
@@ -152,6 +152,7 @@ namespace Worker
                 }
             }
         }
+
 
 
         private static string GetIp(string hostname)
